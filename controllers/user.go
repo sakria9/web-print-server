@@ -28,7 +28,7 @@ func Login(c *gin.Context) {
 
 	session.Set(middlewares.UserKey, user.Email)
 	session.Save()
-	c.JSON(200, gin.H{"message": "Login success"})
+	c.JSON(200, gin.H{"message": "Login success", "data": user})
 }
 
 func Logout(c *gin.Context) {
