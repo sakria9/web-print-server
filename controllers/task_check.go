@@ -29,6 +29,7 @@ func CheckTask() {
 		if err != nil {
 			return
 		}
+		currentTask = task
 		printer.AddToPrintQueue(utils.GetRealPath(task.File))
 	}
 }
