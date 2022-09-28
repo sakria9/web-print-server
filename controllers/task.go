@@ -56,7 +56,7 @@ func CreateTask(c *gin.Context) {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(200, gin.H{"message": "Task created", "id": task.ID})
+	c.JSON(200, gin.H{"message": "Task created", "data": task})
 }
 
 func CancelTask(c *gin.Context) {
@@ -79,7 +79,7 @@ func CancelTask(c *gin.Context) {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(200, gin.H{"status": task.Status})
+	c.JSON(200, gin.H{"data": task})
 }
 
 func ListTask(c *gin.Context) {
@@ -90,5 +90,5 @@ func ListTask(c *gin.Context) {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(200, tasks)
+	c.JSON(200, gin.H{"data": tasks})
 }

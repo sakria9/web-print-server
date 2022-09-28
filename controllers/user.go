@@ -55,7 +55,7 @@ func Register(c *gin.Context) {
 		c.JSON(400, gin.H{"error": "User already exists"})
 		return
 	}
-	c.JSON(200, gin.H{"message": "Register success"})
+	c.JSON(200, gin.H{"message": "Register success", "data": user})
 }
 
 func Me(c *gin.Context) {
@@ -66,5 +66,5 @@ func Me(c *gin.Context) {
 		c.JSON(400, gin.H{"error": "User not found"})
 		return
 	}
-	c.JSON(200, user)
+	c.JSON(200, gin.H{"message": "success", "data": user})
 }
