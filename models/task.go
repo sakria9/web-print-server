@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"sync"
 
 	"github.com/sakria9/web-print-server/db"
@@ -49,7 +50,7 @@ func GetFirstPendingTask() (*Task, error) {
 		return nil, err
 	}
 	if cnt == 0 {
-		return nil, nil
+		return nil, errors.New("No pending task")
 	}
 
 	var task Task
