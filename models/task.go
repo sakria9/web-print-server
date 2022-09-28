@@ -34,11 +34,26 @@ func (t *Task) GetByID() error {
 	return db.GetDB().Where("id = ?", t.ID).First(t).Error
 }
 
+func GetPendingTaskCount() (int64, error) {
+	var count int64
+	err := db.GetDB().Model(&Task{}).Where("status = ?", Pending).Count(&count).Error
+	return count, err
+}
+
 func GetFirstPendingTask() (*Task, error) {
 	lock.Lock()
 	defer lock.Unlock()
+
+	cnt, err := GetPendingTaskCount()
+	if err != nil {
+		return nil, err
+	}
+	if cnt == 0 {
+		return nil, nil
+	}
+
 	var task Task
-	err := db.GetDB().Where("status = ?", Pending).First(&task).Error
+	err = db.GetDB().Where("status = ?", Pending).First(&task).Error
 	if err != nil {
 		return nil, err
 	}
