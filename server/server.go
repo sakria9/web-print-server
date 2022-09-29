@@ -7,7 +7,6 @@ import (
 )
 
 func Init() {
-	config.Init()
 	conf := config.GetConfig()
 	r := setupRouter()
 	go func() {
