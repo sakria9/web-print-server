@@ -10,9 +10,9 @@ func setupRouter() *gin.Engine {
 	r := gin.Default()
 	r.Use(middlewares.AuthCookieStore())
 	r.POST("/logout", controllers.Logout)
-	r.POST("/register", controllers.Register)
 	r.POST("/login", controllers.Login)
 	r.GET("/me", middlewares.AuthMiddleware(), controllers.Me)
+	r.POST("/change-password", middlewares.AuthMiddleware(), controllers.ChangePassword)
 	r.GET("/server", middlewares.AuthMiddleware(), controllers.ServerStatus)
 	task := r.Group("/task")
 	task.Use(middlewares.AuthMiddleware())
@@ -24,6 +24,7 @@ func setupRouter() *gin.Engine {
 	admin := r.Group("/admin")
 	admin.Use(middlewares.AuthMiddleware())
 	{
+		admin.POST("/register", controllers.Register)
 		admin.POST("/disable-print", controllers.DisablePrint)
 		admin.POST("/enable-print", controllers.EnablePrint)
 		admin.POST("/set-max-page", controllers.SetMaxPage)

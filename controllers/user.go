@@ -34,6 +34,7 @@ func Login(c *gin.Context) {
 func Logout(c *gin.Context) {
 	session := sessions.Default(c)
 	session.Clear()
+	session.Save()
 	c.JSON(200, gin.H{"message": "Logout success"})
 }
 
@@ -52,7 +53,7 @@ func Register(c *gin.Context) {
 		return
 	}
 	user.Password = hash
-	if err := user.Create(); err != nil {
+	if err := user.Update(); err != nil {
 		c.JSON(400, gin.H{"error": "User already exists"})
 		return
 	}
@@ -68,4 +69,34 @@ func Me(c *gin.Context) {
 		return
 	}
 	c.JSON(200, gin.H{"message": "success", "data": user})
+}
+
+func ChangePassword(c *gin.Context) {
+	var user models.User
+	session := sessions.Default(c)
+	user.Email = session.Get(middlewares.UserKey).(string)
+	if err := user.GetByEmail(); err != nil {
+		c.JSON(400, gin.H{"error": "User not found"})
+		return
+	}
+	if err := c.ShouldBindJSON(&user); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	rawPassword := user.Password
+	if err := user.GetByEmail(); err != nil {
+		c.JSON(400, gin.H{"error": "User not found"})
+		return
+	}
+	hashedPassword, err := utils.HashPassword(rawPassword)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	user.Password = hashedPassword
+	if err := user.Update(); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"message": "Update success"})
 }
