@@ -37,35 +37,34 @@ func (t *Task) GetByID() error {
 	return db.GetDB().Where("id = ?", t.ID).First(t).Error
 }
 
-func GetPendingTaskCount() (int64, error) {
+func GetPendingTaskCount() int64 {
 	var count int64
 	err := db.GetDB().Model(&Task{}).Where("status = ?", Pending).Count(&count).Error
-	return count, err
+	if err != nil {
+		return 0
+	} else {
+		return count
+	}
 }
 
 func GetFirstPendingTask() (*Task, error) {
 	lock.Lock()
 	defer lock.Unlock()
 
-	cnt, err := GetPendingTaskCount()
-	if err != nil {
-		return nil, err
-	}
+	cnt := GetPendingTaskCount()
 	if cnt == 0 {
 		return nil, errors.New("No pending task")
 	}
 
 	var task Task
-	err = db.GetDB().Where("status = ?", Pending).First(&task).Error
-	if err != nil {
+	if err := db.GetDB().Where("status = ?", Pending).First(&task).Error; err != nil {
 		return nil, err
 	}
 	task.Status = Printing
-	err = task.Update()
-	if err != nil {
+	if err := task.Update(); err != nil {
 		return nil, err
 	}
-	return &task, err
+	return &task, nil
 }
 
 func (t *Task) TryCancelTask() error {
@@ -88,10 +87,14 @@ func GetAllTasks() ([]Task, error) {
 	return tasks, err
 }
 
-func GetPendingPages() (int, error) {
+func GetPendingPages() int {
 	var count int
 	err := db.GetDB().Model(&Task{}).Where("status = ?", Pending).Select("SUM(pages)").Scan(&count).Error
-	return count, err
+	if err != nil {
+		return 0
+	} else {
+		return count
+	}
 }
 
 func GetTasksByEmail(email string) ([]Task, error) {

@@ -6,16 +6,8 @@ import (
 )
 
 func ServerStatus(c *gin.Context) {
-	pending_pages, err := models.GetPendingPages()
-	if err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
-		return
-	}
-	pending_tasks, err := models.GetPendingTaskCount()
-	if err != nil {
-		c.JSON(400, gin.H{"error": err.Error()})
-		return
-	}
+	pending_pages := models.GetPendingPages()
+	pending_tasks := models.GetPendingTaskCount()
 	c.JSON(200, gin.H{
 		"data": gin.H{
 			"pending_pages": pending_pages,
