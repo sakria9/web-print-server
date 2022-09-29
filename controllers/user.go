@@ -38,6 +38,9 @@ func Logout(c *gin.Context) {
 }
 
 func Register(c *gin.Context) {
+	if !checkAdmin(c) {
+		return
+	}
 	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
@@ -49,8 +52,6 @@ func Register(c *gin.Context) {
 		return
 	}
 	user.Password = hash
-	user.MaxPage = 0
-	user.Admin = false
 	if err := user.Create(); err != nil {
 		c.JSON(400, gin.H{"error": "User already exists"})
 		return
