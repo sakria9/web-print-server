@@ -1,8 +1,10 @@
 package controllers
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -16,6 +18,8 @@ func CreateTask(c *gin.Context) {
 	session := sessions.Default(c)
 	var task models.Task
 	var user models.User
+	task.Name = c.PostForm("name")
+	task.Date = fmt.Sprintf(time.Now().Format("2006-01-02 15:04:05"))
 	task.Email = session.Get(middlewares.UserKey).(string)
 	task.Status = models.Pending
 	user.Email = task.Email

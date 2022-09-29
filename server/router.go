@@ -13,6 +13,7 @@ func setupRouter() *gin.Engine {
 	r.POST("/register", controllers.Register)
 	r.POST("/login", controllers.Login)
 	r.GET("/me", middlewares.AuthMiddleware(), controllers.Me)
+	r.GET("/server", middlewares.AuthMiddleware(), controllers.ServerStatus)
 	task := r.Group("/task")
 	task.Use(middlewares.AuthMiddleware())
 	{

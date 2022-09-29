@@ -9,6 +9,8 @@ import (
 
 type Task struct {
 	ID     int64  `json:"id" gorm:"primary_key;autoIncrement"`
+	Name   string `json:"name"`
+	Date   string `json:"date"`
 	File   string `json:"file"`
 	Email  string `json:"email"`
 	Pages  int    `json:"pages"`
@@ -84,6 +86,12 @@ func GetAllTasks() ([]Task, error) {
 	var tasks []Task
 	err := db.GetDB().Find(&tasks).Error
 	return tasks, err
+}
+
+func GetPendingPages() (int, error) {
+	var count int
+	err := db.GetDB().Model(&Task{}).Where("status = ?", Pending).Select("SUM(pages)").Scan(&count).Error
+	return count, err
 }
 
 func GetTasksByEmail(email string) ([]Task, error) {
