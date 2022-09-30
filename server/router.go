@@ -19,7 +19,7 @@ func setupRouter() *gin.Engine {
 	{
 		task.POST("/create", controllers.CreateTask)
 		task.POST("/cancel", controllers.CancelTask)
-		task.GET("/list", controllers.ListTask)
+		task.GET("/list", controllers.ListTaskByEmail)
 	}
 	admin := r.Group("/admin")
 	admin.Use(middlewares.AuthMiddleware())
@@ -28,6 +28,7 @@ func setupRouter() *gin.Engine {
 		admin.POST("/disable-print", controllers.DisablePrint)
 		admin.POST("/enable-print", controllers.EnablePrint)
 		admin.POST("/set-max-page", controllers.SetMaxPage)
+		admin.GET("/list-task", controllers.ListAllTasks)
 	}
 	return r
 }

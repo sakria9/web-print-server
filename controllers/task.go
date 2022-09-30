@@ -75,7 +75,7 @@ func CancelTask(c *gin.Context) {
 		c.JSON(400, gin.H{"error": "Task not found"})
 		return
 	}
-	if task.Email != userEmail {
+	if !checkAdmin(c) && task.Email != userEmail {
 		c.JSON(400, gin.H{"error": "Permission denied"})
 		return
 	}
@@ -86,10 +86,23 @@ func CancelTask(c *gin.Context) {
 	c.JSON(200, gin.H{"data": task})
 }
 
-func ListTask(c *gin.Context) {
+func ListTaskByEmail(c *gin.Context) {
 	session := sessions.Default(c)
 	userEmail := session.Get(middlewares.UserKey).(string)
 	tasks, err := models.GetTasksByEmail(userEmail)
+	if err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"data": tasks})
+}
+
+func ListAllTasks(c *gin.Context) {
+	if !checkAdmin(c) {
+		c.JSON(400, gin.H{"error": "Permission denied"})
+		return
+	}
+	tasks, err := models.GetAllTasks()
 	if err != nil {
 		c.JSON(400, gin.H{"error": err.Error()})
 		return
