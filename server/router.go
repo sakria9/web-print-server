@@ -9,19 +9,19 @@ import (
 func setupRouter() *gin.Engine {
 	r := gin.Default()
 	r.Use(middlewares.AuthCookieStore())
-	r.POST("/logout", controllers.Logout)
-	r.POST("/login", controllers.Login)
-	r.GET("/me", middlewares.AuthMiddleware(), controllers.Me)
-	r.POST("/change-password", middlewares.AuthMiddleware(), controllers.ChangePassword)
-	r.GET("/server", middlewares.AuthMiddleware(), controllers.ServerStatus)
-	task := r.Group("/task")
+	r.POST("/api/logout", controllers.Logout)
+	r.POST("/api/login", controllers.Login)
+	r.GET("/api/me", middlewares.AuthMiddleware(), controllers.Me)
+	r.POST("/api/change-password", middlewares.AuthMiddleware(), controllers.ChangePassword)
+	r.GET("/api/server", middlewares.AuthMiddleware(), controllers.ServerStatus)
+	task := r.Group("/api/task")
 	task.Use(middlewares.AuthMiddleware())
 	{
 		task.POST("/create", controllers.CreateTask)
 		task.POST("/cancel", controllers.CancelTask)
 		task.GET("/list", controllers.ListTaskByEmail)
 	}
-	admin := r.Group("/admin")
+	admin := r.Group("/api/admin")
 	admin.Use(middlewares.AuthMiddleware())
 	{
 		admin.POST("/register", controllers.Register)
